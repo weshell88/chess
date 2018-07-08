@@ -15,6 +15,8 @@ TEMPLATE = app
 SOURCES += main.cpp\
   stone.cpp \
         board.cpp \
+    singlegame.cpp
 
 HEADERS  += board.h \
     stone.h \
+    singlegame.h
