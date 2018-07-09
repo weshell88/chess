@@ -427,6 +427,7 @@ void Board::Regret()
 {
     stone[Log.top().ID] = Log.top();
     Log.pop();
+    if (Log.empty()) return;
     if (Log.top().alive == false)
     {
         stone[Log.top().ID].alive = true;

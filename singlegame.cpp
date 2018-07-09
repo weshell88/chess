@@ -22,6 +22,7 @@ void singleGame::automove()
     getAllSteps(&Steps);
     getBestStep(&Steps,&bestStep);
     moveStep(&bestStep);
+    deleteStep(&Steps);
 }
 void singleGame::getAllSteps(QList<Step*>* Steps)
 {
@@ -68,6 +69,16 @@ void singleGame::moveStep(Step* bestStep)
     selectID=bestStep->movedID;
     move(bestStep->colTo,bestStep->rowTo);
 }
+void singleGame::deleteStep(QList<Step*>* Steps)
+{
+    for(auto iter=Steps->begin();iter!=Steps->end();iter++)
+    {
+        delete *iter;
+    }
+    Steps->clear();
+}
+
+
 int singleGame::getScore()
 {
     int scoreR=0;
@@ -78,4 +89,12 @@ int singleGame::getScore()
         scoreB += stone[i+16].getValue();
     }
     return scoreB-scoreR;
+}
+void singleGame::RegretB()
+{
+    if(!redturn)return;
+    if (Log.empty())return;
+        Regret();
+        Regret();
+        update();
 }
