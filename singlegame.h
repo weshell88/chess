@@ -1,16 +1,27 @@
 #ifndef SINGLEGAME_H
 #define SINGLEGAME_H
 
+#include<QList>
 #include"board.h"
 
 class singleGame:public Board
 {
-    Q_OBJECT public:
-    virtual void clickP(QPoint pt);
+public:
+    struct Step
+    {
+        int movedID;
+        int killID;
+        int colFrom;
+        int rowFrom;
+        int colTo;
+        int rowTo;
+        int score;
+    };
+    void clickCR(int col,int row);
     void automove();
-    int evaluateB();
-    int evaluateR();
-    int evaluate(int b);
-
+    void getBestStep(QList<Step*>* Steps,Step* stp);
+    void getAllSteps(QList<Step*>*Steps);
+    void moveStep(Step* stp);
+    int getScore();
 };
 #endif // SINGLEGAME_H

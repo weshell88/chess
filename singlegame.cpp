@@ -1,83 +1,81 @@
+#include "QList"
 #include "singlegame.h"
+#include "stone.h"
 
-void singleGame::clickP(QPoint pt)
+void singleGame::clickCR(int col,int row)
 {
-    if (!redturn)
-    {
-        return;
-    }
-    if (pt.x() > 10 * d || pt.y() > 11 * d)
-    {
-        selectID = -1;
-        update();
-        return;
-    }
-    int col, row;
-    col = (pt.rx() + r) / d;
-    row = (pt.ry() + r) / d;
-    click(col, row);
+    if (!this->redturn) return;
+    Board::clickCR(col, row);
     update();
-    if (!redturn)
+    if (!this->redturn)
     {
         automove();
         update();
+        selectID=-1;
+        redturn=!redturn;
     }
 }
 void singleGame::automove()
 {
-    int ID ;
-    int Col;
-    int Row;
-    int weight;
-
-    // vector < Step > stepvct;
-    int weightmax = evaluateB() - evaluateR();
-    for (int i = 16; i < 32; i++)
+    QList<Step*> Steps;
+    Step bestStep;
+    getAllSteps(&Steps);
+    getBestStep(&Steps,&bestStep);
+    moveStep(&bestStep);
+}
+void singleGame::getAllSteps(QList<Step*>* Steps)
+{
+    for(int i=16;i<32 ;i++)
     {
-        if(stone[i].alive)
+        if(!stone[i].alive) continue;
+        for(int col=1;col<10;col++)
         {
-            for (int col = 1; col < 10; col++)
+            for(int row=1;row<11;row++)
             {
-                for (int row = 1; row < 11; row++)
+                selectID=i;
+                int getID=GetID(col,row);
+                if(move(col,row))
                 {
-                    selectID = i;
-                    if(move(col, row))
-                    {
-                        weight = evaluateB() -evaluateR();
-                        Regret();
-                        if (weight >= weightmax)
-                        {
-                            ID = i;
-                            Col = col;
-                            Row = row;
-                            weightmax = weight;
-                        }
-                    }
+                    Step* step=new Step;
+                    step->movedID=i;
+                    step->killID=getID;
+                    step->colFrom=Log.top().col;
+                    step->rowFrom=Log.top().row;
+                    step->colTo=col;
+                    step->rowTo=row;
+                    step->score=getScore();
+                    Steps->append(step);
+                    Regret();
                 }
             }
         }
     }
-    selectID = ID;
-    update();
-    move(Col, Row);
-    update();
-    redturn = !redturn;
 }
-
-int singleGame::evaluateB()
+void singleGame::getBestStep(QList<Step*>* Steps,Step* bestStep)
 {
-    return evaluate(16);
-}
-int singleGame::evaluateR()
-{
-    return evaluate(0);
-}
-int singleGame::evaluate(int b)
-{
-    int weightAll = 0;
-    for (int i = 0 + b; i < b + 16; i++)
-    {
-        weightAll += stone[i].getValue();
+    int scoreMax=-10000;
+    for(auto iter=Steps->begin();iter!=Steps->end();iter++)
+    {   Step* bestStepT=*iter;
+        if(bestStepT->score>=scoreMax)
+        {
+            *bestStep=*bestStepT;
+            scoreMax=bestStep->score;
+        }
     }
-    return weightAll;
+}
+void singleGame::moveStep(Step* bestStep)
+{
+    selectID=bestStep->movedID;
+    move(bestStep->colTo,bestStep->rowTo);
+}
+int singleGame::getScore()
+{
+    int scoreR=0;
+    int scoreB=0;
+    for(int i=1;i<16;i++)
+    {
+        scoreR += stone[i].getValue();
+        scoreB += stone[i+16].getValue();
+    }
+    return scoreB-scoreR;
 }

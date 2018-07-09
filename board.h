@@ -9,7 +9,6 @@
 #include<QTime>
 #include<cmath>
 #include <stack>
-
 #include"stone.h"
 /**************************************/
 /**************************************/
@@ -60,11 +59,11 @@ class Board:public QWidget
     /**************************************/
     /**************************************/
     void mouseReleaseEvent(QMouseEvent * e);
-    virtual void clickP(QPoint pt);
+    void clickP(QPoint pt);
     /**************************************/
     /******************走棋函数********************/
     /**************************************/
-    void click(int col, int row);
+    virtual void clickCR(int col, int row);
     bool move(int col, int row);
 
     // **************************************//
