@@ -32,7 +32,7 @@ class Board:public QWidget
         QObject::connect(RegretButton, SIGNAL(clicked()), this,
                 SLOT(RegretB()));
     }
-    int d=20 ;
+    int d=40 ;
     int r=d/2;
     Stone stone[32];
     int selectID;

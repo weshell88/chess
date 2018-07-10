@@ -87,7 +87,6 @@ int Board::GetID(int col, int row)
         if (stone[i].row == row && stone[i].col == col && stone[i].alive)
         {
             getID = i;
-
             break;
         }
     }
@@ -153,15 +152,15 @@ bool Board::move(int col, int row)
             return false;
         } else if (canmove(selectID, col, row))
         {
+            getID=GetID(col,row);
             stone[getID].alive = false;
             Log.push(stone[getID]);
             Log.push(stone[selectID]);
             stone[selectID].row = row;
             stone[selectID].col = col;
             return checked();
-        }else{
-            return false;
         }
+        return false;
     }
 }
 
@@ -179,7 +178,6 @@ bool Board::checked()
         return false;
     } else
     {
-        selectID = -1;
         return true;
     }
 }

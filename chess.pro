@@ -13,10 +13,14 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-  stone.cpp \
-        board.cpp \
-    singlegame.cpp
+stone.cpp \
+board.cpp \
+singlegame.cpp
 
-HEADERS  += board.h \
-    stone.h \
-    singlegame.h
+HEADERS  +=\
+stone.h \
+board.h \
+singlegame.h
+
+CONFIG += c++11
+

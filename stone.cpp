@@ -14,32 +14,23 @@ QString  Stone::gettext()
 }
 int  Stone::getValue()
 {
-    if (this->alive)
+    if (!alive) return 0;
+    switch (type)
     {
-        switch (this->type)
-        {
-        case j:return 100;
-        case m:return 50;
-        case p:return 50;
-        case b:return 20;
-        case J:return 10000;
-        case s:return 30;
-        case x:return 30;
-        }
-    } else
-    {
-        return 0;
+    case j:return 100;
+    case m:return 50;
+    case p:return 50;
+    case b:return 20;
+    case J:return 10000;
+    case s:return 30;
+    case x:return 30;
     }
 }
+
 void  Stone::init(int i)
 {
-    struct
-    {
-        int r, c;
-        Type t;
-    } pos[16] =
-    {
-    {1, 1, j},
+    struct  {int r, c; Type t;}  pos[16] =
+    {{1, 1, j},
     {1, 9, j},
     {1, 2, m},
     {1, 8, m},

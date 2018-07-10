@@ -1,4 +1,4 @@
-#include "QList"
+#include <QList>
 #include "singlegame.h"
 #include "stone.h"
 
@@ -24,40 +24,84 @@ void singleGame::automove()
     moveStep(&bestStep);
     deleteStep(&Steps);
 }
+
 void singleGame::getAllSteps(QList<Step*>* Steps)
 {
+
     for(int i=16;i<32 ;i++)
     {
         if(!stone[i].alive) continue;
-        for(int col=1;col<10;col++)
+        searchStone(Steps,i);
+    }
+}
+void  singleGame::searchStone(QList<Step*>* Steps,int i)
+{
+    switch (stone[i].type)
+    {
+    case Stone::p:searchL(Steps,i) ;break;
+    case Stone::j:searchL(Steps,i) ;break;
+    case Stone::m:searchC(Steps,i,2) ;break;
+    case Stone::b:searchC(Steps,i,1) ;break;
+    case Stone::J:searchC(Steps,i,1) ;break;
+    case Stone::s:searchC(Steps,i,1) ;break;
+    case Stone::x:searchC(Steps,i,2) ;break;
+
+    }
+}
+void singleGame::searchL(QList<Step*>* Steps,int i)
+{
+    for(int row=1;row<11;row++)
+    {
+        saveStep(Steps,i,stone[i].col,row);
+    }
+    for(int col=1;col<10;col++)
+    {
+        saveStep(Steps,i,col,stone[i].row);
+    }
+}
+
+void singleGame::searchC(QList<Step*>* Steps,int i,int d)
+{
+    for(int col=stone[i].col-d;col<=stone[i].col+d;col++)
+    {
+        if(col>9) break;
+        if(col<1) continue;
+        for(int row=stone[i].row-d;col<=stone[i].row+d;row++)
         {
-            for(int row=1;row<11;row++)
-            {
-                selectID=i;
-                int getID=GetID(col,row);
-                if(move(col,row))
-                {
-                    Step* step=new Step;
-                    step->movedID=i;
-                    step->killID=getID;
-                    step->colFrom=Log.top().col;
-                    step->rowFrom=Log.top().row;
-                    step->colTo=col;
-                    step->rowTo=row;
-                    step->score=getScore();
-                    Steps->append(step);
-                    Regret();
-                }
-            }
+            if(row>10) break;
+            if(row<1) continue;
+            saveStep(Steps,i,col,row);
         }
     }
 }
+
+void singleGame::saveStep(QList<Step*>* Steps,int i,int col,int row)
+{
+    selectID=i;
+    int ID=GetID(col,row);
+    if(move(col,row))
+    {   update();
+        Step* step=new Step;
+        step->movedID=i;
+        step->killID=ID;
+        step->colFrom=Log.top().col;
+        step->rowFrom=Log.top().row;
+        step->colTo=col;
+        step->rowTo=row;
+        int getSc=getScore();
+        step->score=getSc;
+        Steps->append(step);
+        Regret();
+    }
+}
+
 void singleGame::getBestStep(QList<Step*>* Steps,Step* bestStep)
 {
     int scoreMax=-10000;
     for(auto iter=Steps->begin();iter!=Steps->end();iter++)
     {   Step* bestStepT=*iter;
-        if(bestStepT->score>=scoreMax)
+        if(bestStepT->score>scoreMax)
+
         {
             *bestStep=*bestStepT;
             scoreMax=bestStep->score;
@@ -83,10 +127,10 @@ int singleGame::getScore()
 {
     int scoreR=0;
     int scoreB=0;
-    for(int i=1;i<16;i++)
+    for(int i=0;i<16;i++)
     {
-        scoreR += stone[i].getValue();
-        scoreB += stone[i+16].getValue();
+        scoreR += Board::stone[i].getValue();
+        scoreB += Board::stone[i+16].getValue();
     }
     return scoreB-scoreR;
 }
@@ -94,7 +138,7 @@ void singleGame::RegretB()
 {
     if(!redturn)return;
     if (Log.empty())return;
-        Regret();
-        Regret();
-        update();
+    Regret();
+    Regret();
+    update();
 }
