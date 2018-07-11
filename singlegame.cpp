@@ -17,9 +17,13 @@ void singleGame::clickCR(int col,int row)
 }
 void singleGame::automove()
 {
+    QList<Step*> Steps;
     Step bestStep;
-    getBestStep(&bestStep);
-	moveStep(&bestStep);
+    getAllSteps(&Steps);
+    getNewScore(&Steps);
+    getBestStep(&Steps,&bestStep);
+    moveStep(&bestStep);
+    deleteStep(&Steps);
 }
 
 void singleGame::getAllSteps(QList<Step*>* Steps)
@@ -92,12 +96,10 @@ void singleGame::saveStep(QList<Step*>* Steps,int i,int col,int row)
 	}
 }
 
-void singleGame::getBestStep(Step* bestStep)
+void singleGame::getBestStep(QList<Step*>* Steps,Step* bestStep)
 {
-    QList<Step*> Steps;
-    getAllSteps(&Steps);
 	int scoreMax=-10000;
-    for(auto iter=Steps.begin();iter!=Steps.end();iter++)
+	for(auto iter=Steps->begin();iter!=Steps->end();iter++)
 	{   Step* bestStepT=*iter;
 		if(bestStepT->score>scoreMax)
 
@@ -106,7 +108,6 @@ void singleGame::getBestStep(Step* bestStep)
 			scoreMax=bestStep->score;
 		}
 	}
-    deleteStep(&Steps);
 }
 void singleGame::moveStep(Step* bestStep)
 {
@@ -141,4 +142,45 @@ void singleGame::RegretB()
 	Regret();
 	Regret();
 	update();
+}
+///////////////////////////////////////
+
+
+void singleGame::getNewScore(QList<Step*>* Steps)
+{
+    for(auto iter=Steps->begin();iter!=Steps->end();iter++)
+    {   Step* step1=*iter;
+        moveStep(step1);
+        QList<Step*> Steps2;
+        Step step2;
+        getAllStepsR(&Steps2);
+        getBestStepR(&Steps2,&step2);
+        moveStep(&step2);
+        step1->score=getScore();
+        Regret();
+        Regret();
+        deleteStep(&Steps2);
+    }
+}
+void   singleGame::getAllStepsR(QList<Step*>* Steps)
+{
+    for(int i=0;i<16 ;i++)
+    {
+        if(!stone[i].alive) continue;
+        searchStone(Steps,i);
+    }
+}
+
+void singleGame::getBestStepR(QList<Step*>* Steps,Step* bestStep)
+{
+    int scoreMin=10000;
+    for(auto iter=Steps->begin();iter!=Steps->end();iter++)
+    {
+        Step* stepTemp=*iter;
+        if(stepTemp->score<scoreMin)
+        {
+            *bestStep=*stepTemp;
+            scoreMin=stepTemp->score;
+        }
+    }
 }
