@@ -17,15 +17,17 @@ public:
         int rowTo;
         int score;
     };
+    int deep;
     void clickCR(int col,int row);
     void getBestStep(Step* stp,int level);
     void getAllSteps(QList<Step*>* Steps);
     void saveStep(QList<Step*>* Steps,int i,int col,int row);
     void moveStep(Step* stp);
+    void retunStep();
     int getScore();
-    int getMaxScore(int level);
-    int getMinScore(int level);
-/*********help function*********/
+    int getMaxScore(int level,int score);
+    int getMinScore(int level,int score);
+    /*********help function*********/
     void searchStone(QList<Step*>* Steps,int i);
     void searchL(QList<Step*>* Steps,int i);
     void searchC(QList<Step*>* Steps,int i,int d);

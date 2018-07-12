@@ -28,13 +28,13 @@ class Board:public QWidget
 	QPoint center(int c, int r);
 	QPoint center(int i);
 
+
 	/**************************************/
 	/*****************画棋盘*********************/
 	/**************************************/
 	void drawBoard(QPainter & painter);
 	void drawStone(QPainter & painter);
 	void paintEvent(QPaintEvent *);
-
 	/*********************************/
 	/**************************************/
 	/**************************************/
